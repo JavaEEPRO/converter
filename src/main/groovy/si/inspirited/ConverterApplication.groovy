@@ -16,7 +16,7 @@ class ConverterApplication implements CommandLineRunner{
 
     }
 
-    private List<String> parseCsv(String fileToParsePath) {
+    private List<String[]> parseCsv(String fileToParsePath) {
         List<String[]> res = new ArrayList<>()
         String FILE_TO_PARSE_PATH = "D:/input.csv"
         if (fileToParsePath != null && fileToParsePath != "") { FILE_TO_PARSE_PATH = fileToParsePath; }
