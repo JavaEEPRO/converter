@@ -16,7 +16,7 @@ class ConverterApplication implements CommandLineRunner{
 
     }
 
-    private List<String[]> parseCsv(String fileToParsePath) {
+    def List<String[]> parseCsv(String fileToParsePath) {
         List<String[]> res = new ArrayList<>()
         if (fileToParsePath != null && fileToParsePath != "") {
             BufferedReader br = new BufferedReader(new FileReader(fileToParsePath))
