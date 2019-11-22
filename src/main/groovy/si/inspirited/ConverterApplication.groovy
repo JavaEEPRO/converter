@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.w3c.dom.Attr
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.Transformer
@@ -16,6 +15,9 @@ import javax.xml.transform.stream.StreamResult
 
 @SpringBootApplication
 class ConverterApplication implements CommandLineRunner{
+
+    String[] SUB_NODES = "name description vendor price features".split()
+    String[] SEMANTIC_UTILS = "id code current".split()
 
 	static void main(String[] args) {
 		SpringApplication.run(ConverterApplication, args)
@@ -41,57 +43,54 @@ class ConverterApplication implements CommandLineRunner{
     def Document getXml(List<String[]> source, String root) {   //root:products
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-
-        Document doc = docBuilder.newDocument()
+        Document res = docBuilder.newDocument()
 
         String[] headers = source.get(0);
         source.remove(0)
 
-        String[] subNodes = "name description vendor price features".split()
-
-        Element rootElement = doc.createElement(root)
-        doc.appendChild(rootElement) as Document
+        Element rootElement = res.createElement(root)
+        res.appendChild(rootElement) as Document
 
         for (String[] node : source) {
-            Element staff = doc.createElement(root.substring(0, root.length() - 1))
+            Element staff = res.createElement(root.substring(0, root.length() - 1))
             rootElement.appendChild(staff) as Document
 
-            Attr attr = doc.createAttribute("id")
+            Attr attr = res.createAttribute(SEMANTIC_UTILS[0])
             attr.setValue(node[0])
             staff.setAttributeNode(attr) as Document
 
                 for (int i = 0; i < 2; i++) {
-                    Element subStaff = doc.createElement(subNodes[i])
-                    subStaff.appendChild(doc.createTextNode(node[i + 5]))
+                    Element subStaff = res.createElement(SUB_NODES[i])
+                    subStaff.appendChild(res.createTextNode(node[i + 5].replace("\"", "")))
                     staff.appendChild(subStaff)
                 }
 
-                Element vendorStaff = doc.createElement(subNodes[2])
+                Element vendorStaff = res.createElement(SUB_NODES[2])
                 staff.appendChild(vendorStaff)
-                Attr vendorCodeAttr = doc.createAttribute("code")
-                vendorCodeAttr.setValue(node[1])
+                Attr vendorCodeAttr = res.createAttribute(SEMANTIC_UTILS[1])
+                vendorCodeAttr.setValue(node[1].replace("\"", ""))
                 vendorStaff.setAttributeNode(vendorCodeAttr) as Document
-                vendorStaff.appendChild(doc.createTextNode(node[2]))
+                vendorStaff.appendChild(res.createTextNode(node[2].replace("\"", "")))
 
-                Element priceStaff = doc.createElement(subNodes[3])
+                Element priceStaff = res.createElement(SUB_NODES[3])
                 staff.appendChild(priceStaff)
-                Attr priceAttr = doc.createAttribute("current")
-                priceAttr.setValue(node[7])
+                Attr priceAttr = res.createAttribute(SEMANTIC_UTILS[2])
+                priceAttr.setValue(node[7].replace("\"", ""))
                 priceStaff.setAttributeNode(priceAttr) as Document
 
-                Element featuresStaff = doc.createElement(subNodes[4])
+                Element featuresStaff = res.createElement(SUB_NODES[4])
                 staff.appendChild(featuresStaff)
 
                     for (int i = 0; i < 2; i++) {
-                        Element featureSubStaff = doc.createElement(subNodes[4].substring(0, subNodes[4].length() - 1))
-                        Attr featureNameAttr = doc.createAttribute(subNodes[0])
-                        featureNameAttr.setValue(headers[i + 3])
+                        Element featureSubStaff = res.createElement(SUB_NODES[4].substring(0, SUB_NODES[4].length() - 1))
+                        Attr featureNameAttr = res.createAttribute(SUB_NODES[0])
+                        featureNameAttr.setValue(headers[i + 3].replace("\"", ""))
                         featureSubStaff.setAttributeNode(featureNameAttr) as Document
-                        featureSubStaff.appendChild(doc.createTextNode(node[i + 3]))
+                        featureSubStaff.appendChild(res.createTextNode(node[i + 3].replace("\"", "")))
                         featuresStaff.appendChild(featureSubStaff)
                     }
         }
-        return doc
+        return res
     }
 
     def persistXmlAsFile(Document documentToBeSaved, String targetPath) {

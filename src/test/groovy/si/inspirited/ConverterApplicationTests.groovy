@@ -1,13 +1,10 @@
 package si.inspirited
 
-import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.w3c.dom.Document
-
 import static org.junit.jupiter.api.Assertions.*
 
 @SpringBootTest
@@ -15,7 +12,6 @@ class ConverterApplicationTests {
 
 	@Autowired
 	ResourceLoader resourceLoader
-
 
 	String ROOT_ELEMENT = "products"
 	String PATH_TO_CSV_FILE_TO_BE_PARSED
@@ -52,6 +48,6 @@ class ConverterApplicationTests {
 		File resultXml = new File(PATH_WHERE_XML_EXPECTED_TO_BE_SAVED);
 
 		assertTrue(resultXml.exists())
-		assertTrue(resultXml.delete())
+		//assertTrue(resultXml.delete())
 	}
 }
