@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
+import org.w3c.dom.Document
+
 import static org.junit.jupiter.api.Assertions.*
 
 @SpringBootTest
@@ -28,4 +30,11 @@ class ConverterApplicationTests {
 		assertNotEquals(0, receivedList.size())
 	}
 
+	@Test
+	void getXml_whenReceivedDocumentIsNotEmpty_thenCorrect() {
+		ConverterApplication converterApplication = new ConverterApplication();
+		Document returnedDocument = converterApplication.getXml(converterApplication.parseCsv("src/main/resources/csv/input.csv"), "products");
+
+		assertNotNull(returnedDocument);
+	}
 }
