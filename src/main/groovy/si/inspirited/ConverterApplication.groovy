@@ -18,13 +18,13 @@ class ConverterApplication implements CommandLineRunner{
 
     private List<String[]> parseCsv(String fileToParsePath) {
         List<String[]> res = new ArrayList<>()
-        String FILE_TO_PARSE_PATH = "D:/input.csv"
-        if (fileToParsePath != null && fileToParsePath != "") { FILE_TO_PARSE_PATH = fileToParsePath; }
-        BufferedReader br = new BufferedReader(new FileReader(FILE_TO_PARSE_PATH))
-        String line
-        while ((line = br.readLine()) != null) {
-            String[] values = line.split(",")
-            res.add(values)
+        if (fileToParsePath != null && fileToParsePath != "") {
+            BufferedReader br = new BufferedReader(new FileReader(fileToParsePath))
+            String line
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",")
+                res.add(values)
+            }
         }
         return res;
     }
