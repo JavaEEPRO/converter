@@ -31,7 +31,7 @@ class ConverterApplication implements CommandLineRunner{
             BufferedReader br = new BufferedReader(new FileReader(fileToParsePath))
             String line
             while ((line = br.readLine()) != null) {
-                String[] values = line.split(",")
+                String[] values = line.split(",\"")
                 res.add(values)
             }
         }
