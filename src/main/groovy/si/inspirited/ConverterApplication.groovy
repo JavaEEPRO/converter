@@ -93,4 +93,15 @@ class ConverterApplication implements CommandLineRunner{
         }
         return doc
     }
+
+    def persistXmlAsFile(Document documentToBeSaved, String targetPath) {
+        if  (documentToBeSaved != null && targetPath != null && targetPath != "") {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance()
+            Transformer transformer = transformerFactory.newTransformer()
+            DOMSource src = new DOMSource(documentToBeSaved)
+
+            StreamResult result = new StreamResult(new File(targetPath))
+            transformer.transform(src, result)
+        }
+    }
 }

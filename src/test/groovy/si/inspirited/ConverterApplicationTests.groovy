@@ -1,5 +1,6 @@
 package si.inspirited
 
+import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,7 +14,11 @@ import static org.junit.jupiter.api.Assertions.*
 class ConverterApplicationTests {
 
 	@Autowired
-	ResourceLoader resourceLoader;
+	ResourceLoader resourceLoader
+
+
+	String ROOT_ELEMENT = "products"
+	String PATH_TO_CSV_FILE_TO_BE_PARSED
 
 	@Test
 	void contextLoads() {
@@ -21,10 +26,9 @@ class ConverterApplicationTests {
 
 	@Test
 	void parseCsv_whenReceivedListIsNotEmpty_thenCorrect() {
-		Resource resource = resourceLoader.getResource("file:src/main/resources/csv/input.csv")
-		String fileName = resource.getFile().getAbsolutePath()
-		ConverterApplication converterApplication = new ConverterApplication();
-		List<String[]> receivedList = converterApplication.parseCsv(fileName)
+		PATH_TO_CSV_FILE_TO_BE_PARSED = resourceLoader.getResource('file:src/main/resources/csv/input.csv').getFile().getAbsolutePath()
+		ConverterApplication converterApplication = new ConverterApplication()
+		List<String[]> receivedList = converterApplication.parseCsv(PATH_TO_CSV_FILE_TO_BE_PARSED)
 
 		assertNotNull(receivedList)
 		assertNotEquals(0, receivedList.size())
@@ -32,9 +36,22 @@ class ConverterApplicationTests {
 
 	@Test
 	void getXml_whenReceivedDocumentIsNotEmpty_thenCorrect() {
+		PATH_TO_CSV_FILE_TO_BE_PARSED = resourceLoader.getResource('file:src/main/resources/csv/input.csv').getFile().getAbsolutePath()
 		ConverterApplication converterApplication = new ConverterApplication();
-		Document returnedDocument = converterApplication.getXml(converterApplication.parseCsv("src/main/resources/csv/input.csv"), "products");
+		Document returnedDocument = converterApplication.getXml(converterApplication.parseCsv(PATH_TO_CSV_FILE_TO_BE_PARSED), ROOT_ELEMENT)
 
 		assertNotNull(returnedDocument);
+	}
+
+	@Test
+	void persistXmlAsFile_whenSavedFileExists_thenCorrect() {
+		PATH_TO_CSV_FILE_TO_BE_PARSED = resourceLoader.getResource('file:src/main/resources/csv/input.csv').getFile().getAbsolutePath()
+		String PATH_WHERE_XML_EXPECTED_TO_BE_SAVED = PATH_TO_CSV_FILE_TO_BE_PARSED.replace("\\csv\\input.csv", "\\xml\\result.xml")
+		ConverterApplication converterApplication = new ConverterApplication()
+		converterApplication.persistXmlAsFile(converterApplication.getXml(converterApplication.parseCsv(PATH_TO_CSV_FILE_TO_BE_PARSED), ROOT_ELEMENT), PATH_WHERE_XML_EXPECTED_TO_BE_SAVED)
+		File resultXml = new File(PATH_WHERE_XML_EXPECTED_TO_BE_SAVED);
+
+		assertTrue(resultXml.exists())
+		assertTrue(resultXml.delete())
 	}
 }
