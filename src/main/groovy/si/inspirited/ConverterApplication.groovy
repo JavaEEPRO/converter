@@ -12,12 +12,15 @@ import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import java.time.LocalDateTime
 
 @SpringBootApplication
 class ConverterApplication implements CommandLineRunner{
 
     String[] SUB_NODES = "name description vendor price features".split()
     String[] SEMANTIC_UTILS = "id code current".split()
+    String DEFAULT_DEST_PATH_TO_STORE_XML = "D:/result.xml"
+    String ROOT_ELEMENT = "products"
 
 	static void main(String[] args) {
 		SpringApplication.run(ConverterApplication, args)
@@ -25,6 +28,15 @@ class ConverterApplication implements CommandLineRunner{
 
 	@Override
 	void run(String... args) throws Exception {
+        if (args.length < 1) {
+            println LocalDateTime.now().toString() + " WARN restart app with at least one necessary input param (required: path to .csv source file to parse)"
+            println "optional is second param (destination path to file, where result xml document should be stored, ex: D:/result.xml), else default dest. path is: " + DEFAULT_DEST_PATH_TO_STORE_XML
+        }
+        else if (args.length > 0) {
+            List receivedData = parseCsv(args[0])
+            Document structuredAsXml = getXml(receivedData, ROOT_ELEMENT)
+            persistXmlAsFile(structuredAsXml, args.length > 1 ? args[1] : DEFAULT_DEST_PATH_TO_STORE_XML)
+        }
     }
 
     def List<String[]> parseCsv(String fileToParsePath) {
